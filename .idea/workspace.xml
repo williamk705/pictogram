@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="add22ea2-00ff-428d-9dfa-0f5ef1c75044" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/lib/routes/picture-fave.dart" afterPath="$PROJECT_DIR$/lib/routes/picture-fave.dart" />
     </list>
     <ignored path="$PROJECT_DIR$/.dart_tool/" />
     <ignored path="$PROJECT_DIR$/.idea/" />
@@ -81,14 +81,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="picture-fave.dart" pinned="false" current-in-tab="true">
+      <file leaf-file-name="picture-fave.dart" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/routes/picture-fave.dart">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
-              <caret line="3" column="37" lean-forward="false" selection-start-line="3" selection-start-column="37" selection-end-line="3" selection-end-column="37" />
+            <state relative-caret-position="799">
+              <caret line="47" column="44" lean-forward="true" selection-start-line="47" selection-start-column="44" selection-end-line="47" selection-end-column="44" />
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name=".gitignore" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="170">
+              <caret line="10" column="33" lean-forward="false" selection-start-line="10" selection-start-column="33" selection-end-line="10" selection-end-column="33" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -175,6 +185,7 @@
         <option value="$PROJECT_DIR$/lib/routes/picture-gallery.dart" />
         <option value="$PROJECT_DIR$/lib/routes/picture-fave.dart" />
         <option value="$PROJECT_DIR$/lib/models.dart" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -221,29 +232,6 @@
               <item name="pictograph" type="462c0819:PsiDirectoryNode" />
               <item name="android" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="pictograph" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pictograph" type="462c0819:PsiDirectoryNode" />
-              <item name="lib" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="pictograph" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pictograph" type="462c0819:PsiDirectoryNode" />
-              <item name="lib" type="462c0819:PsiDirectoryNode" />
-              <item name="customWidgets" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="pictograph" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pictograph" type="462c0819:PsiDirectoryNode" />
-              <item name="lib" type="462c0819:PsiDirectoryNode" />
-              <item name="helper" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="pictograph" type="b2602c69:ProjectViewProjectNode" />
-              <item name="pictograph" type="462c0819:PsiDirectoryNode" />
-              <item name="lib" type="462c0819:PsiDirectoryNode" />
-              <item name="routes" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="pictograph" type="b2602c69:ProjectViewProjectNode" />
@@ -445,16 +433,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/lib/routes/picture-details.dart">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="24" column="12" lean-forward="false" selection-start-line="24" selection-start-column="12" selection-end-line="24" selection-end-column="12" />
-          <folding>
-            <element signature="e#0#20#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/android/app/src/main/AndroidManifest.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
@@ -839,11 +817,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/routes/picture-fave.dart">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="37" lean-forward="false" selection-start-line="3" selection-start-column="37" selection-end-line="3" selection-end-column="37" />
+        <state relative-caret-position="799">
+          <caret line="47" column="44" lean-forward="true" selection-start-line="47" selection-start-column="44" selection-end-line="47" selection-end-column="44" />
           <folding>
             <element signature="e#0#39#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="33" lean-forward="false" selection-start-line="10" selection-start-column="33" selection-end-line="10" selection-end-column="33" />
+          <folding />
         </state>
       </provider>
     </entry>
