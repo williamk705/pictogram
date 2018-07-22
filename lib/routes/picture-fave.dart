@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../helper/picture-contents.dart';
 import '../routes/picture-details.dart';
 import '../helper/file-storage.dart';
-import '../models.dart';
 
 class LikedPicturePage extends StatefulWidget {
 
