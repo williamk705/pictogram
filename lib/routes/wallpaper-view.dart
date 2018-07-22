@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:http/http.dart' as http;
-import 'dart:io';
+import '../helper/alert-modal.dart';
 
 class WallpaperView extends StatefulWidget{
   final picInfo;
@@ -35,34 +35,20 @@ class Wallpaper extends State<WallpaperView> {
         'data': picBytes
       });
       if(result == 'success') {
-        alert(
+        Popups.alert(
+          context,
           'Success',
           'Your wallpaper has been updated.'
         );
       }
     } on PlatformException {
       print('Not supported by IOS');
-      alert(
-          'Failure',
-          'Wallpaper update not supported by IOS'
+      Popups.alert(
+        context,
+        'Failure',
+        'Wallpaper update not supported by IOS'
       );
     }
-  }
-
-  Future alert(String titleText, String contentText) {
-    return showDialog(
-      context: context,
-      builder: (context) => new AlertDialog(
-        title: new Text(titleText),
-        content: new Text(contentText),
-        actions: <Widget>[
-          new FlatButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: new Text('Close'),
-          ),
-        ],
-      ),
-    );
   }
 
 

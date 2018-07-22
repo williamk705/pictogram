@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../helper/picture-contents.dart';
 import '../routes/picture-details.dart';
 import '../helper/file-storage.dart';
+import '../models.dart';
 
 class LikedPicturePage extends StatefulWidget {
 
@@ -45,10 +46,10 @@ class LikedPictureState extends State<LikedPicturePage> {
           itemCount: likedPhotosList.length,
           itemBuilder: (BuildContext context, index) {
             final item = likedPhotosList[index];
-            final picture = likedPhotos[item]['urls']['thumb'];
-            final firstName = likedPhotos[item]['user']['first_name'];
-            final lastName = likedPhotos[item]['user']['last_name'];
-            final location = likedPhotos[item]['user']['location'];
+            final picture = likedPhotos[item].urls.thumb;
+            final firstName = likedPhotos[item].user.firstName;
+            final lastName = likedPhotos[item].user.lastName;
+            final location = likedPhotos[item].user.location;
 
             return ListTile(
               contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),

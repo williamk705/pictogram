@@ -1,15 +1,18 @@
-import 'package:flutter/material.dart';
-import '../helper/file-storage.dart';
-import '../helper/picture-contents.dart';
-import 'package:simple_permissions/simple_permissions.dart';
 import 'dart:async';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:unicorndial/unicorndial.dart';
 import 'package:share/share.dart';
+import 'package:flutter/material.dart';
+import 'package:simple_permissions/simple_permissions.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import '../helper/alert-modal.dart';
+import '../helper/file-storage.dart';
+import '../helper/picture-contents.dart';
 import './wallpaper-view.dart';
+import '../models.dart';
 
 class DetailViewState extends StatefulWidget {
-  final Map info;
+  final Picture info;
   final Storage storage;
   final Map likedPhotos;
 
@@ -23,7 +26,7 @@ class PictureDetailView extends State<DetailViewState> {
 
   Permission permission;
 
-  Map picInfo = {};
+  Picture picInfo;
   Map likedPhotos =  {};
   String state;
 
@@ -68,14 +71,14 @@ class PictureDetailView extends State<DetailViewState> {
                 Container(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: Text(
-                    PictureContents.getFirstAndLastName(this.picInfo['user']['first_name'], this.picInfo['user']['last_name']),
+                    PictureContents.getFirstAndLastName(this.picInfo.user.firstName, this.picInfo.user.lastName),
                     style: TextStyle(
                       fontWeight: FontWeight.bold
                     )
                   )
                 ),
                 Text(
-                  PictureContents.getLocation(this.picInfo['user']['location'])
+                  PictureContents.getLocation(this.picInfo.user.location)
                 )
               ]
             )
@@ -84,7 +87,7 @@ class PictureDetailView extends State<DetailViewState> {
             Icons.star,
             color: Colors.red[500]
           ),
-          Text(PictureContents.getLikes(this.picInfo['likes']))
+          Text(PictureContents.getLikes(this.picInfo.likes))
         ]
       )
     );
@@ -92,7 +95,7 @@ class PictureDetailView extends State<DetailViewState> {
     Widget textSection = Container(
       padding: const EdgeInsets.only(left: 32.0, right: 32.0, top: 20.0),
       child: Text(
-        PictureContents.getUserBiography(this.picInfo['user']['bio']),
+        PictureContents.getUserBiography(this.picInfo.user.bio),
         softWrap: true
       ),
     );
@@ -112,10 +115,16 @@ class PictureDetailView extends State<DetailViewState> {
                       icon: Image.asset('graphics/instagram.png'),
                       tooltip: 'instagram',
                       onPressed: () {
-                        final instagramUser = PictureContents.getSocialMediaUsername(picInfo['user']['instagram_username']);
+                        final instagramUser = PictureContents.getSocialMediaUsername(picInfo.user.instagramUsername);
                         final url = 'https://www.instagram.com/${instagramUser}';
                         if(!instagramUser.isEmpty) {
                           _launchURL(url);
+                        }else {
+                          Popups.alert(
+                              context,
+                              'Sorry',
+                              'This photographer does not have an Instagram.'
+                          );
                         }
                       }
                   )
@@ -130,10 +139,16 @@ class PictureDetailView extends State<DetailViewState> {
                       icon: Image.asset('graphics/twitter.png'),
                       tooltip: 'twitter',
                       onPressed: () {
-                        final twitterUser = PictureContents.getSocialMediaUsername(picInfo['user']['twitter_username']);
+                        final twitterUser = PictureContents.getSocialMediaUsername(picInfo.user.twitterUsername);
                         final url = 'https://www.twitter.com/${twitterUser}';
                         if(!twitterUser.isEmpty) {
                           _launchURL(url);
+                        }else {
+                          Popups.alert(
+                              context,
+                              'Sorry',
+                              'This photographer does not have a Twitter.'
+                          );
                         }
                       }
                   )
@@ -148,9 +163,15 @@ class PictureDetailView extends State<DetailViewState> {
                     icon: Image.asset('graphics/briefcase.png'),
                     tooltip: 'portfolio',
                     onPressed: () {
-                      final url = PictureContents.getSocialMediaUsername(picInfo['user']['portfolio_url']);
+                      final url = PictureContents.getSocialMediaUsername(picInfo.user.portfolio);
                       if(!url.isEmpty) {
                         _launchURL(url);
+                      }else {
+                        Popups.alert(
+                            context,
+                            'Sorry',
+                            'This photographer does not have a Portfolio.'
+                        );
                       }
                     }
                 ),
@@ -171,7 +192,7 @@ class PictureDetailView extends State<DetailViewState> {
                       print('open share sheet');
                       final RenderBox box = context.findRenderObject();
                         Share.share(
-                          picInfo['urls']['full'],
+                          picInfo.urls.full,
                           sharePositionOrigin:
                           box.localToGlobal(Offset.zero) &
                           box.size
@@ -200,19 +221,20 @@ class PictureDetailView extends State<DetailViewState> {
               snap: true,
               actions: <Widget> [
                 new IconButton(
-                  icon: likedPhotos[picInfo['id']] != null
+                  icon: likedPhotos[picInfo.id] != null
                       ? const Icon(Icons.favorite)
                       : const Icon(Icons.favorite_border),
-                  color: likedPhotos[picInfo['id']] != null
+                  color: likedPhotos[picInfo.id] != null
                       ? Colors.red
                       : Colors.white,
                   tooltip: 'like',
                   onPressed: () {
                     super.setState((){
-                      if(likedPhotos[picInfo['id']] == null) {
-                        likedPhotos[picInfo['id']] = picInfo;
+                      if(likedPhotos[picInfo.id] == null) {
+                        likedPhotos[picInfo.id] = picInfo;
+                        print(picInfo);
                       }else {
-                        likedPhotos.remove(picInfo['id']);
+                        likedPhotos.remove(picInfo.id);
                       }
                     });
                   }
@@ -224,31 +246,31 @@ class PictureDetailView extends State<DetailViewState> {
                   onPressed: () {
                     Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => WallpaperView(this.picInfo['urls']['regular']))
+                        MaterialPageRoute(builder: (context) => WallpaperView(this.picInfo.urls.regular))
                     );
                   },
                 ),
                 new PopupMenuButton(
                   onSelected: (value) {
                     widget.storage.downloadImage(
-                        '${this.picInfo['id']}-${value['type']}.jpg', value['data']
+                        '${this.picInfo.id}-${value['type']}.jpg', value['data']
                     );
                   },
                   itemBuilder: (BuildContext context) => <PopupMenuItem<Map>>[
                     new PopupMenuItem<Map> (
-                      value: {'data': this.picInfo['urls']['thumb'], 'type': 'thumbnail'},
+                      value: {'data': this.picInfo.urls.thumb, 'type': 'thumbnail'},
                       child: new Text('Download as Thumbnail'),
                     ),
                     new PopupMenuItem<Map> (
-                      value: {'data': this.picInfo['urls']['regular'], 'type': 'regular'},
+                      value: {'data': this.picInfo.urls.regular, 'type': 'regular'},
                       child: new Text('Download Regular Image'),
                     ),
                     new PopupMenuItem<Map> (
-                      value: {'data': this.picInfo['urls']['full'], 'type': 'full'},
+                      value: {'data': this.picInfo.urls.full, 'type': 'full'},
                       child: new Text('Download Full Image'),
                     ),
                     new PopupMenuItem<Map> (
-                      value: {'data': this.picInfo['urls']['raw'], 'type': 'raw'},
+                      value: {'data': this.picInfo.urls.raw, 'type': 'raw'},
                       child: new Text('Download Raw Image'),
                     )
                   ],
@@ -259,7 +281,7 @@ class PictureDetailView extends State<DetailViewState> {
                   fit: StackFit.expand,
                   children: <Widget>[
                     new Image.network(
-                      this.picInfo['urls']['small'],
+                      this.picInfo.urls.small,
                       fit: BoxFit.cover,
                       height: 256.0
                     ),

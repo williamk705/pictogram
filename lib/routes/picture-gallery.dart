@@ -5,46 +5,48 @@ import 'dart:convert';
 import '../customWidgets/custom-drawer.dart';
 import './picture-details.dart';
 import '../helper/file-storage.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import '../models.dart';
 
 class PictureGallery extends StatefulWidget {
 
-  GoogleSignIn _googleSignIn;
-  GoogleSignInAccount _googleAccount;
+  final _account;
+  final _user;
 
-  PictureGallery(this._googleSignIn, this._googleAccount);
+  PictureGallery(this._account, this._user);
 
   @override
-  createState() => new PictureGalleryState(_googleSignIn, _googleAccount);
+  createState() => new PictureGalleryState(_account, _user);
 }
 
 class PictureGalleryState extends State<PictureGallery> {
 
-  GoogleSignIn _googleSignIn;
-  GoogleSignInAccount _googleAccount;
-
+  /// Variables for FireBase account information
+  final _account;
+  final _user;
+  /// A list of picture data represented in json format
   List<dynamic> data = [];
-  var settings = {
-    'Authorization': 'Client-ID 422f5a13a02dd79ea1b18cc1e8ac15efe5ea52752c98f9cfa788a7788ba69911',
-  };
+  /// A list of photos the user logged in likes
   Map likedPhotos = {};
-  int page = 1;
+  /// Variables for displaying search widgets
   bool searchFieldActive = false;
   bool searchTypeOn = false;
   String searchQuery = '';
+  int page = 1;
+  /// Unsplash API authorization
+  var settings = {
+    'Authorization': 'Client-ID 422f5a13a02dd79ea1b18cc1e8ac15efe5ea52752c98f9cfa788a7788ba69911',
+  };
 
-  PictureGalleryState(this._googleSignIn, this._googleAccount);
+  PictureGalleryState(this._account, this._user);
 
   @override
   void initState() {
+    super.initState();
     this.initPhotos();
   }
 
-  /*
-    URL params
-    orientation: portrait, landscape, square
-    query: <type your query>
-  */
+  /// Sends a request to the Unsplash api and fetches the pictures to populate
+  /// the view on init.
   Future initPhotos() async {
     var response = await http.get(
       Uri.encodeFull('https://api.unsplash.com/photos'),
@@ -52,10 +54,11 @@ class PictureGalleryState extends State<PictureGallery> {
     );
 
     this.setState(() {
-      data = json.decode(response.body).toList();
+      data = Picture.fromList(json.decode(response.body).toList());
     });
   }
 
+  /// Sends a request for photo searching
   Future queryPhotos(query) async {
     var response = await http.get(
       Uri.encodeFull('https://api.unsplash.com/search/photos?page=1&query=${query}'),
@@ -63,10 +66,11 @@ class PictureGalleryState extends State<PictureGallery> {
     );
 
     this.setState(() {
-      data = json.decode(response.body)['results'].toList();
+      data = Picture.fromList(json.decode(response.body)['results'].toList());
     });
   }
 
+  /// Sends a request for scrolling down the Gallery view.
   Future loadMorePhotos() async {
     page += 1;
     var search = searchTypeOn
@@ -82,12 +86,13 @@ class PictureGalleryState extends State<PictureGallery> {
           ? json.decode(response.body)['results'].toList()
           : json.decode(response.body).toList();
       for (var i = 0; i < tempData.length; i++) {
-        data.add(tempData[i]);
+        data.add(new Picture.fromJson(tempData[i]));
       }
     });
   }
 
-
+  /// If the user tries to go back to the login page they will be prompted to
+  /// logout from their account
   Future<bool> _onWillPop() {
     return showDialog(
       context: context,
@@ -101,7 +106,11 @@ class PictureGalleryState extends State<PictureGallery> {
           ),
           new FlatButton(
             onPressed: () {
-              _googleSignIn.disconnect();
+              try {
+                _account.disconnect();
+              } catch(error) {
+                _account.signOut();
+              }
               Navigator.of(context).pop(true);
             },
             child: new Text('Yes'),
@@ -111,6 +120,7 @@ class PictureGalleryState extends State<PictureGallery> {
     ) ?? false;
   }
 
+  /// The Widgets that will be used in this view.
   Widget customScaffold() {
     return new Scaffold(
         appBar: new AppBar(
@@ -166,7 +176,7 @@ class PictureGalleryState extends State<PictureGallery> {
                         decoration: new BoxDecoration(
                             color: const Color(0xff7c94b6),
                             image: new DecorationImage(
-                                image: NetworkImage(data[index]['urls']['thumb']),
+                                image: NetworkImage(data[index].urls.thumb),//['urls']['thumb']),
                                 fit: BoxFit.cover
                             ),
                             border: new Border.all (
@@ -179,7 +189,7 @@ class PictureGalleryState extends State<PictureGallery> {
               },
             )
         ),
-        drawer: CustomDrawer(context, likedPhotos, _googleSignIn, _googleAccount).getDrawer()
+        drawer: CustomDrawer(context, likedPhotos, _account, _user).getDrawer()
     );
   }
 
